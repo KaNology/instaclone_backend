@@ -30,12 +30,26 @@ public class User {
 	@Column(name = "password")
 	private String password;
 	
+	@Column(name = "avatar", columnDefinition = "MEDIUMBLOB")
+	private String avatar;
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Photo> photos;
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Video> videos;
 	
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Post> posts;
+	
+	public List<Post> getPosts() {
+		return posts;
+	}
+
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
+
 	@Column(name = "role")
 	private String role;
 
@@ -50,6 +64,14 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.role = role;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 	public List<Photo> getPhotos() {

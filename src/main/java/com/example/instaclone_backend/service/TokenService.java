@@ -25,7 +25,7 @@ public class TokenService {
 	
 	public User getUser(String token) {
 		AuthenticationToken userToken = tokenRepo.findByToken(token);
-		if(Objects.nonNull(userToken)) {
+		if(Objects.isNull(userToken)) {
 			return null;
 		}
 		return userToken.getUser();

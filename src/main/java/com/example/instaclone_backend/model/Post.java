@@ -21,8 +21,14 @@ public class Post {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
+	@Column(name = "title")
+	private String title;
+	
 	@Column(name = "description")
 	private String description;
+	
+	@Column(name = "files")
+	private String[] files;
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "photos")
@@ -42,9 +48,25 @@ public class Post {
 	
 	@Column(name = "is_private")
 	private Boolean isPrivate;
-	
+
+	public String[] getFiles() {
+		return files;
+	}
+
+	public void setFiles(String[] files) {
+		this.files = files;
+	}
+
 	@Column(name = "created_date")
 	private Date createdDate;
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	public Post() {
 		super();

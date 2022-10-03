@@ -3,6 +3,7 @@ package com.example.instaclone_backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.instaclone_backend.common.ApiResponse;
 import com.example.instaclone_backend.dto.PostDto;
+import com.example.instaclone_backend.exception.CustomException;
 import com.example.instaclone_backend.model.Post;
 import com.example.instaclone_backend.model.User;
 import com.example.instaclone_backend.service.PhotoService;
@@ -41,14 +43,19 @@ public class PostController {
 		// create the post
 		Post newPost = postService.createPost(postDto, user);
 
-		// add the photos into the post
-		for (MultipartFile photo : postDto.getPhotos()) {
-			photoService.createPhoto(photo, newPost, user);
-		}
-
-		// add the videos into the post
-		for (MultipartFile video : postDto.getVideos()) {
-			videoService.createVideo(video, newPost, user);
+		// add the photos/videos relationship into the post and the user
+		for (MultipartFile file : postDto.getFiles()) {
+			String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+			if (fileName.contains("..")) {
+				throw new CustomException("not a valid file");
+			}
+			
+			if (fileName.contains(".jpg") || fileName.contains(".jpeg") || fileName.contains(".png")) {
+				photoService.createPhoto(file, newPost, user);
+			}
+			else if (fileName.contains(".mp4")) {
+				videoService.createVideo(file, newPost, user);
+			}
 		}
 
 		return new ResponseEntity<>(new ApiResponse(true, "post created"), HttpStatus.CREATED);
