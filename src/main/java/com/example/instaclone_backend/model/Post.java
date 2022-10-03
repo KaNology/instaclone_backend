@@ -27,7 +27,7 @@ public class Post {
 	@Column(name = "description")
 	private String description;
 	
-	@Column(name = "files")
+	@Column(name = "files", columnDefinition = "MEDIUMBLOB")
 	private String[] files;
 	
 	@OneToMany(cascade = CascadeType.ALL)

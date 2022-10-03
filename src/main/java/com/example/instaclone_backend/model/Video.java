@@ -18,7 +18,7 @@ public class Video {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(name = "content")
+	@Column(name = "content", columnDefinition = "MEDIUMBLOB")
 	private String video;
 
 	@Column(name = "created_date")

@@ -17,7 +17,7 @@ public class Photo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(name = "content")
+	@Column(name = "content", columnDefinition = "MEDIUMBLOB")
 	private String photo;
 
 	@Column(name = "created_date")
