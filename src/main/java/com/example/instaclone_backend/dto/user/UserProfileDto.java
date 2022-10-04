@@ -1,19 +1,13 @@
 package com.example.instaclone_backend.dto.user;
 
-import java.util.List;
-
-import com.example.instaclone_backend.model.Photo;
-import com.example.instaclone_backend.model.Post;
-import com.example.instaclone_backend.model.Video;
-
 public class UserProfileDto {
 	private String avatar;
 	private String firstName;
 	private String lastName;
 	private String email;
-	private List<Photo> photos;
-	private List<Video> videos;
-	private List<Post> posts;
+	private Integer photos;
+	private Integer videos;
+	private Integer posts;
 	
 	public String getAvatar() {
 		return avatar;
@@ -31,29 +25,8 @@ public class UserProfileDto {
 		this.email = email;
 	}
 
-	public List<Post> getPosts() {
-		return posts;
-	}
-
-	public void setPosts(List<Post> posts) {
-		this.posts = posts;
-	}
-
-	public UserProfileDto() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-	public UserProfileDto(String firstName, String lastName, List<Photo> photos, List<Video> videos) {
-		super();
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.photos = photos;
-		this.videos = videos;
-	}
-
-	public UserProfileDto(String avatar, String firstName, String lastName, String email,
-			List<Photo> photos, List<Video> videos, List<Post> posts) {
+	public UserProfileDto(String avatar, String firstName, String lastName, String email, Integer photos,
+			Integer videos, Integer posts) {
 		super();
 		this.avatar = avatar;
 		this.firstName = firstName;
@@ -62,6 +35,11 @@ public class UserProfileDto {
 		this.photos = photos;
 		this.videos = videos;
 		this.posts = posts;
+	}
+
+	public UserProfileDto() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public String getFirstName() {
@@ -76,16 +54,28 @@ public class UserProfileDto {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public List<Photo> getPhotos() {
+
+	public Integer getPhotos() {
 		return photos;
 	}
-	public void setPhotos(List<Photo> photos) {
+
+	public void setPhotos(Integer photos) {
 		this.photos = photos;
 	}
-	public List<Video> getVideos() {
+
+	public Integer getVideos() {
 		return videos;
 	}
-	public void setVideos(List<Video> videos) {
+
+	public void setVideos(Integer videos) {
 		this.videos = videos;
+	}
+
+	public Integer getPosts() {
+		return posts;
+	}
+
+	public void setPosts(Integer posts) {
+		this.posts = posts;
 	}
 }

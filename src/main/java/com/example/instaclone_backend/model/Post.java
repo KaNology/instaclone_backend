@@ -30,12 +30,10 @@ public class Post {
 	@Column(name = "files", columnDefinition = "MEDIUMBLOB")
 	private String[] files;
 	
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "photos")
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<Photo> photos;
 	
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "videos")
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<Video> videos;
 	
 //	@OneToMany(cascade = CascadeType.ALL)

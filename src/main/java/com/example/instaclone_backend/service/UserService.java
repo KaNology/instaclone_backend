@@ -110,9 +110,9 @@ public class UserService {
 				user.getFirstName(),
 				user.getLastName(),
 				user.getEmail(),
-				user.getPhotos(),
-				user.getVideos(),
-				user.getPosts()
+				user.getPhotos().size(),
+				user.getVideos().size(),
+				user.getPosts().size()
 		);
 
 		return response;

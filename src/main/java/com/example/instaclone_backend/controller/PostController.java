@@ -1,11 +1,15 @@
 package com.example.instaclone_backend.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.instaclone_backend.common.ApiResponse;
 import com.example.instaclone_backend.dto.PostDto;
+import com.example.instaclone_backend.dto.post.PostResponseDto;
 import com.example.instaclone_backend.exception.CustomException;
 import com.example.instaclone_backend.model.Post;
 import com.example.instaclone_backend.model.User;
@@ -61,5 +66,10 @@ public class PostController {
 		}
 
 		return new ResponseEntity<>(new ApiResponse(true, "post created"), HttpStatus.CREATED);
+	}
+	
+	@GetMapping("/list/{userId}")
+	public List<PostResponseDto> getUserPost(@PathVariable("userId") Integer userId) {
+		return postService.getUserPost(userId);
 	}
 }

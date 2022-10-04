@@ -33,13 +33,13 @@ public class User {
 	@Column(name = "avatar", columnDefinition = "MEDIUMBLOB")
 	private String avatar;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Photo> photos;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Video> videos;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Post> posts;
 	
 	public List<Post> getPosts() {
