@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ import com.example.instaclone_backend.service.TokenService;
 import com.example.instaclone_backend.service.VideoService;
 
 @RequestMapping("/post")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class PostController {
 	@Autowired
@@ -33,8 +35,8 @@ public class PostController {
 	@Autowired
 	TokenService tokenService;
 
-	@PostMapping("/create")
-	public ResponseEntity<ApiResponse> createPost(@RequestBody PostDto postDto, @RequestParam("token") String token) {
+	@PostMapping(path = "/create")
+	public ResponseEntity<ApiResponse> createPost(@ModelAttribute PostDto postDto, @RequestParam("token") String token) {
 		// authenticate the user
 		tokenService.authenticate(token);
 
