@@ -66,9 +66,12 @@ public class PostService {
 				CommentResponseDto commentDto = new CommentResponseDto();
 				commentDto.setContent(comment.getContent());
 				commentDto.setUserId(comment.getUser().getId());
+				commentDto.setUserName(comment.getUser().getFirstName() + " " + comment.getUser().getLastName());
+				commentDto.setUserAvatar(comment.getUser().getAvatar());
 				postComments.add(commentDto);
 			}
 
+			responseDto.setPostId(post.getId());
 			responseDto.setTitle(post.getTitle());
 			responseDto.setDescription(post.getDescription());
 			responseDto.setFiles(post.getFiles());

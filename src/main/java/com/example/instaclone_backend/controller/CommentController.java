@@ -23,7 +23,7 @@ public class CommentController {
 	@Autowired
 	TokenService tokenService;
 
-	@PostMapping("/create/")
+	@PostMapping(path = "/create", consumes = "text/plain")
 	public ResponseEntity<ApiResponse> createComment(@RequestBody String content, @RequestParam("token") String token,
 			@RequestParam("postId") Integer postId) {
 		// authenticate the user

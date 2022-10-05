@@ -3,12 +3,19 @@ package com.example.instaclone_backend.dto.post;
 import java.util.List;
 
 public class PostResponseDto {
+	private Integer postId;
 	private String title;
 	private String description;
 	private String[] files;
 	private Boolean isPrivate;
 	private List<CommentResponseDto> comments;
 	
+	public Integer getPostId() {
+		return postId;
+	}
+	public void setPostId(Integer postId) {
+		this.postId = postId;
+	}
 	public List<CommentResponseDto> getComments() {
 		return comments;
 	}
