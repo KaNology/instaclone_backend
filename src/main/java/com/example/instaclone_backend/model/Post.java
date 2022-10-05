@@ -36,9 +36,8 @@ public class Post {
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<Video> videos;
 	
-//	@OneToMany(cascade = CascadeType.ALL)
-//	@JoinColumn(name = "comments")
-//	private List<Comment> comments;
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+	private List<Comment> comments;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -46,6 +45,14 @@ public class Post {
 	
 	@Column(name = "is_private")
 	private Boolean isPrivate;
+
+	@Column(name = "created_date")
+	private Date createdDate;
+
+	public Post() {
+		super();
+		this.createdDate = new Date();
+	}
 
 	public String[] getFiles() {
 		return files;
@@ -55,20 +62,12 @@ public class Post {
 		this.files = files;
 	}
 
-	@Column(name = "created_date")
-	private Date createdDate;
-
 	public String getTitle() {
 		return title;
 	}
 
 	public void setTitle(String title) {
 		this.title = title;
-	}
-
-	public Post() {
-		super();
-		this.createdDate = new Date();
 	}
 
 	public Boolean getIsPrivate() {
@@ -125,5 +124,13 @@ public class Post {
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
 	}
 }

@@ -1,10 +1,20 @@
 package com.example.instaclone_backend.dto.post;
 
+import java.util.List;
+
 public class PostResponseDto {
 	private String title;
 	private String description;
 	private String[] files;
 	private Boolean isPrivate;
+	private List<CommentResponseDto> comments;
+	
+	public List<CommentResponseDto> getComments() {
+		return comments;
+	}
+	public void setComments(List<CommentResponseDto> comments) {
+		this.comments = comments;
+	}
 	public String getTitle() {
 		return title;
 	}
