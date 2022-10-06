@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,11 @@ import com.example.instaclone_backend.dto.post.PostResponseDto;
 import com.example.instaclone_backend.dto.post.UserPostResponseDto;
 import com.example.instaclone_backend.exception.CustomException;
 import com.example.instaclone_backend.model.Comment;
+import com.example.instaclone_backend.model.Like;
 import com.example.instaclone_backend.model.Post;
 import com.example.instaclone_backend.model.User;
 import com.example.instaclone_backend.repository.CommentRepo;
+import com.example.instaclone_backend.repository.LikeRepo;
 import com.example.instaclone_backend.repository.PostRepo;
 
 @Service
@@ -28,6 +31,8 @@ public class PostService {
 	PostRepo postRepo;
 	@Autowired
 	CommentRepo commentRepo;
+	@Autowired
+	LikeRepo likeRepo;
 
 	public Post createPost(PostDto postDto, User user) {
 		Post newPost = new Post();
@@ -74,16 +79,16 @@ public class PostService {
 
 	public PostResponseDto getPost(Integer postId) {
 		Optional<Post> optionalPost = postRepo.findById(postId);
-		
-		if(optionalPost.isEmpty()) {
+
+		if (optionalPost.isEmpty()) {
 			throw new CustomException("Post does not exist");
 		}
-		
+
 		Post post = optionalPost.get();
 		PostResponseDto response = new PostResponseDto();
-		
+
 		List<CommentResponseDto> postComments = new ArrayList<>();
-		
+
 		List<Comment> comments = commentRepo.findByPostId(post.getId());
 		for (Comment comment : comments) {
 			CommentResponseDto commentDto = new CommentResponseDto();
@@ -93,13 +98,19 @@ public class PostService {
 			commentDto.setUserAvatar(comment.getUser().getAvatar());
 			postComments.add(commentDto);
 		}
-		
+
+		List<Like> likes = likeRepo.findByPostId(post.getId());
+
 		response.setPostId(postId);
 		response.setTitle(post.getTitle());
 		response.setDescription(post.getDescription());
 		response.setComments(postComments);
 		response.setFiles(post.getFiles());
-		
+		response.setNumLikes(likes.size());
+		response.setIsLiked(
+			Objects.nonNull(likeRepo.findByUserIdAndPostId(post.getUser().getId(), postId))
+		);
+
 		return response;
 	}
 }

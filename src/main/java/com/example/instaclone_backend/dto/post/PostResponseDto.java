@@ -8,7 +8,21 @@ public class PostResponseDto {
 	private String description;
 	private String[] files;
 	private List<CommentResponseDto> comments;
+	private Boolean isLiked;
+	private Integer numLikes;
 	
+	public Boolean getIsLiked() {
+		return isLiked;
+	}
+	public void setIsLiked(Boolean isLiked) {
+		this.isLiked = isLiked;
+	}
+	public Integer getNumLikes() {
+		return numLikes;
+	}
+	public void setNumLikes(Integer numLikes) {
+		this.numLikes = numLikes;
+	}
 	public Integer getPostId() {
 		return postId;
 	}
