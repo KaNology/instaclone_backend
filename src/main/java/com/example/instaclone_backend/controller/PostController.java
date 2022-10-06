@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.instaclone_backend.common.ApiResponse;
 import com.example.instaclone_backend.dto.PostDto;
 import com.example.instaclone_backend.dto.post.PostResponseDto;
+import com.example.instaclone_backend.dto.post.UserPostResponseDto;
 import com.example.instaclone_backend.exception.CustomException;
 import com.example.instaclone_backend.model.Post;
 import com.example.instaclone_backend.model.User;
@@ -69,7 +70,12 @@ public class PostController {
 	}
 	
 	@GetMapping("/list/{userId}")
-	public List<PostResponseDto> getUserPost(@PathVariable("userId") Integer userId) {
-		return postService.getUserPost(userId);
+	public List<UserPostResponseDto> getAllUserPost(@PathVariable("userId") Integer userId) {
+		return postService.getAllUserPost(userId);
+	}
+	
+	@GetMapping("/{postId}")
+	public PostResponseDto getPost(@PathVariable("postId") Integer postId) {
+		return postService.getPost(postId);
 	}
 }
