@@ -10,4 +10,5 @@ import com.example.instaclone_backend.model.Post;
 @Repository
 public interface PostRepo extends JpaRepository<Post, Integer> {
 	List<Post> findByUserId(Integer userId);
+	List<Post> findByIsPrivate(Boolean isPrivate);
 }

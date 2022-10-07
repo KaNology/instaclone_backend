@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.instaclone_backend.dto.PostDto;
 import com.example.instaclone_backend.dto.post.CommentResponseDto;
+import com.example.instaclone_backend.dto.post.PostFeedResponseDto;
 import com.example.instaclone_backend.dto.post.PostResponseDto;
 import com.example.instaclone_backend.dto.post.UserPostResponseDto;
 import com.example.instaclone_backend.exception.CustomException;
@@ -77,7 +78,7 @@ public class PostService {
 		return response;
 	}
 
-	public PostResponseDto getPost(Integer postId) {
+	public PostResponseDto getPost(Integer postId, User... user) {
 		Optional<Post> optionalPost = postRepo.findById(postId);
 
 		if (optionalPost.isEmpty()) {
@@ -108,9 +109,37 @@ public class PostService {
 		response.setFiles(post.getFiles());
 		response.setNumLikes(likes.size());
 		response.setIsLiked(
-			Objects.nonNull(likeRepo.findByUserIdAndPostId(post.getUser().getId(), postId))
+			Objects.nonNull(likeRepo.findByUserIdAndPostId(user[0].getId(), postId))
 		);
 
+		return response;
+	}
+
+	public List<PostFeedResponseDto> getAllPublicPost(User...user) {
+		// TODO Auto-generated method stub
+		List<Post> publicPosts = postRepo.findByIsPrivate(false);
+		List<PostFeedResponseDto> response = new ArrayList<>();
+		
+		for(Post post : publicPosts) {
+			PostFeedResponseDto responseDto = new PostFeedResponseDto();
+			List<Like> likes = likeRepo.findByPostId(post.getId());
+			
+			responseDto.setPostId(post.getId());
+			responseDto.setTitle(post.getTitle());
+			responseDto.setDescription(post.getDescription());
+			
+			responseDto.setThumbnail(post.getFiles()[0]);
+			responseDto.setNumLikes(likes.size());
+			responseDto.setIsLiked(Objects.nonNull(likeRepo.findByUserIdAndPostId(user[0].getId(), post.getId())));
+			
+			responseDto.setUserId(post.getUser().getId());
+			responseDto.setUserName(post.getUser().getFirstName() + " " + post.getUser().getLastName());
+			responseDto.setUserAvatar(post.getUser().getAvatar());
+			responseDto.setCreatedDate(post.getCreatedDate());
+			
+			response.add(responseDto);
+		}
+		
 		return response;
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.instaclone_backend.common.ApiResponse;
 import com.example.instaclone_backend.dto.PostDto;
+import com.example.instaclone_backend.dto.post.PostFeedResponseDto;
 import com.example.instaclone_backend.dto.post.PostResponseDto;
 import com.example.instaclone_backend.dto.post.UserPostResponseDto;
 import com.example.instaclone_backend.exception.CustomException;
@@ -42,7 +43,8 @@ public class PostController {
 	TokenService tokenService;
 
 	@PostMapping(path = "/create")
-	public ResponseEntity<ApiResponse> createPost(@ModelAttribute PostDto postDto, @RequestParam("token") String token) {
+	public ResponseEntity<ApiResponse> createPost(@ModelAttribute PostDto postDto,
+			@RequestParam("token") String token) {
 		// authenticate the user
 		tokenService.authenticate(token);
 
@@ -57,25 +59,49 @@ public class PostController {
 			if (fileName.contains("..")) {
 				throw new CustomException("not a valid file");
 			}
-			
+
 			if (fileName.contains(".jpg") || fileName.contains(".jpeg") || fileName.contains(".png")) {
 				photoService.createPhoto(file, newPost, user);
-			}
-			else if (fileName.contains(".mp4")) {
+			} else if (fileName.contains(".mp4")) {
 				videoService.createVideo(file, newPost, user);
 			}
 		}
 
 		return new ResponseEntity<>(new ApiResponse(true, "post created"), HttpStatus.CREATED);
 	}
-	
+
 	@GetMapping("/list/{userId}")
 	public List<UserPostResponseDto> getAllUserPost(@PathVariable("userId") Integer userId) {
 		return postService.getAllUserPost(userId);
 	}
-	
+
 	@GetMapping("/{postId}")
-	public PostResponseDto getPost(@PathVariable("postId") Integer postId) {
+	public PostResponseDto getPost(@PathVariable("postId") Integer postId,
+			@RequestParam(name = "token", required = false) String token) {
+		if (token != null) {
+			// authenticate the user
+			tokenService.authenticate(token);
+
+			User user = tokenService.getUser(token);
+
+			return postService.getPost(postId, user);
+		}
+
 		return postService.getPost(postId);
+	}
+
+	@GetMapping("/")
+	public List<PostFeedResponseDto> getAllPublicPost(@RequestParam(name = "token", required = false) String token) {
+
+		if (token != null) {
+			// authenticate the user
+			tokenService.authenticate(token);
+
+			User user = tokenService.getUser(token);
+
+			return postService.getAllPublicPost(user);
+		}
+		
+		return postService.getAllPublicPost();
 	}
 }
