@@ -1,16 +1,12 @@
 package com.example.instaclone_backend.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.example.instaclone_backend.dto.PostDto;
 import com.example.instaclone_backend.dto.post.CommentResponseDto;
@@ -19,6 +15,7 @@ import com.example.instaclone_backend.dto.post.PostResponseDto;
 import com.example.instaclone_backend.dto.post.UserPostResponseDto;
 import com.example.instaclone_backend.exception.CustomException;
 import com.example.instaclone_backend.model.Comment;
+import com.example.instaclone_backend.model.File;
 import com.example.instaclone_backend.model.Like;
 import com.example.instaclone_backend.model.Post;
 import com.example.instaclone_backend.model.User;
@@ -37,27 +34,13 @@ public class PostService {
 
 	public Post createPost(PostDto postDto, User user) {
 		Post newPost = new Post();
-		List<String> files = new ArrayList<String>();
+		
 		newPost.setTitle(postDto.getTitle());
 		newPost.setDescription(postDto.getDescription());
 		newPost.setUser(user);
 		newPost.setIsPrivate(postDto.getIsPrivate());
-
-		// add the photos/videos into the post
-		for (MultipartFile file : postDto.getFiles()) {
-			String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-			if (fileName.contains("..")) {
-				throw new CustomException("not a valid file");
-			}
-
-			try {
-				files.add(Base64.getEncoder().encodeToString(file.getBytes()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		newPost.setFiles(files.toArray(new String[0]));
 		postRepo.save(newPost);
+		
 		return newPost;
 	}
 
@@ -70,7 +53,7 @@ public class PostService {
 
 			responseDto.setPostId(post.getId());
 			responseDto.setTitle(post.getTitle());
-			responseDto.setThumbnail(post.getFiles()[0]);
+			responseDto.setThumbnail(post.getFiles().get(0).getFile());
 			responseDto.setIsPrivate(post.getIsPrivate());
 
 			response.add(responseDto);
@@ -106,8 +89,17 @@ public class PostService {
 		response.setTitle(post.getTitle());
 		response.setDescription(post.getDescription());
 		response.setComments(postComments);
-		response.setFiles(post.getFiles());
+		
+		List<String> files = new ArrayList<>();
+		for (File file : post.getFiles()) {
+			files.add(file.getFile());
+		}
+		
+		response.setFiles(files.toArray(new String[0]));
 		response.setNumLikes(likes.size());
+		response.setUserId(post.getUser().getId());
+		response.setUserAvatar(post.getUser().getAvatar());
+		response.setUserName(post.getUser().getFirstName() + " " + post.getUser().getLastName());
 		response.setIsLiked(
 			Objects.nonNull(likeRepo.findByUserIdAndPostId(user[0].getId(), postId))
 		);
@@ -128,7 +120,7 @@ public class PostService {
 			responseDto.setTitle(post.getTitle());
 			responseDto.setDescription(post.getDescription());
 			
-			responseDto.setThumbnail(post.getFiles()[0]);
+			responseDto.setThumbnail(post.getFiles().get(0).getFile());
 			responseDto.setNumLikes(likes.size());
 			responseDto.setIsLiked(Objects.nonNull(likeRepo.findByUserIdAndPostId(user[0].getId(), post.getId())));
 			

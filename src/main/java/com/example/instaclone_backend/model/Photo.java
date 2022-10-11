@@ -1,13 +1,13 @@
 package com.example.instaclone_backend.model;
 
-import java.util.Date;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,39 +16,18 @@ public class Photo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-
-	@Column(name = "content", columnDefinition = "MEDIUMBLOB")
-	private String photo;
-
-	@Column(name = "created_date")
-	private Date createdDate;
 	
-	@ManyToOne
-	@JoinColumn(name = "post_id")
-	private Post post;
+	@OneToOne(targetEntity = File.class, fetch = FetchType.EAGER)
+	@JoinColumn(nullable = false, name = "file_id")
+	private File file;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	public Post getPost() {
-		return post;
-	}
-
-	public void setPost(Post post) {
-		this.post = post;
-	}
-
 	public Photo() {
-		this.createdDate = new Date();
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public Integer getId() {
@@ -59,20 +38,12 @@ public class Photo {
 		this.id = id;
 	}
 
-	public String getPhoto() {
-		return photo;
+	public File getFile() {
+		return file;
 	}
 
-	public void setPhoto(String photo) {
-		this.photo = photo;
-	}
-
-	public Date getDate() {
-		return createdDate;
-	}
-
-	public void setDate(Date date) {
-		this.createdDate = date;
+	public void setFile(File file) {
+		this.file = file;
 	}
 
 	public User getUser() {
@@ -82,5 +53,4 @@ public class Photo {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
 }

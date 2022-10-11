@@ -11,6 +11,28 @@ public class PostResponseDto {
 	private Boolean isLiked;
 	private Integer numLikes;
 	
+	private Integer userId;
+	private String userName;
+	private String userAvatar;
+	
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getUserAvatar() {
+		return userAvatar;
+	}
+	public void setUserAvatar(String userAvatar) {
+		this.userAvatar = userAvatar;
+	}
 	public Boolean getIsLiked() {
 		return isLiked;
 	}

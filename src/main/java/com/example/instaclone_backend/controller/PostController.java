@@ -22,8 +22,10 @@ import com.example.instaclone_backend.dto.post.PostFeedResponseDto;
 import com.example.instaclone_backend.dto.post.PostResponseDto;
 import com.example.instaclone_backend.dto.post.UserPostResponseDto;
 import com.example.instaclone_backend.exception.CustomException;
+import com.example.instaclone_backend.model.File;
 import com.example.instaclone_backend.model.Post;
 import com.example.instaclone_backend.model.User;
+import com.example.instaclone_backend.service.FileService;
 import com.example.instaclone_backend.service.PhotoService;
 import com.example.instaclone_backend.service.PostService;
 import com.example.instaclone_backend.service.TokenService;
@@ -41,6 +43,8 @@ public class PostController {
 	VideoService videoService;
 	@Autowired
 	TokenService tokenService;
+	@Autowired
+	FileService fileService;
 
 	@PostMapping(path = "/create")
 	public ResponseEntity<ApiResponse> createPost(@ModelAttribute PostDto postDto,
@@ -59,11 +63,13 @@ public class PostController {
 			if (fileName.contains("..")) {
 				throw new CustomException("not a valid file");
 			}
-
+			
 			if (fileName.contains(".jpg") || fileName.contains(".jpeg") || fileName.contains(".png")) {
-				photoService.createPhoto(file, newPost, user);
+				File newFile = fileService.createFile(file, "image", newPost);
+				photoService.createPhoto(newFile, user);
 			} else if (fileName.contains(".mp4")) {
-				videoService.createVideo(file, newPost, user);
+				File newFile = fileService.createFile(file, "video", newPost);
+				videoService.createVideo(newFile, user);
 			}
 		}
 
