@@ -44,16 +44,17 @@ public class PostService {
 		return newPost;
 	}
 
-	public List<UserPostResponseDto> getAllUserPost(Integer userId) {
+	public List<UserPostResponseDto> getAllUserPost(Integer userId, User...user) {
 		List<Post> userPosts = postRepo.findByUserId(userId);
 		List<UserPostResponseDto> response = new ArrayList<>();
-
+		
 		for (Post post : userPosts) {
 			UserPostResponseDto responseDto = new UserPostResponseDto();
 
 			responseDto.setPostId(post.getId());
 			responseDto.setTitle(post.getTitle());
 			responseDto.setThumbnail(post.getFiles().get(0).getFile());
+			responseDto.setThumbnailType(post.getFiles().get(0).getFileType());
 			responseDto.setIsPrivate(post.getIsPrivate());
 
 			response.add(responseDto);
@@ -91,11 +92,14 @@ public class PostService {
 		response.setComments(postComments);
 		
 		List<String> files = new ArrayList<>();
+		List<String> fileType = new ArrayList<>();
 		for (File file : post.getFiles()) {
 			files.add(file.getFile());
+			fileType.add(file.getFileType());
 		}
 		
 		response.setFiles(files.toArray(new String[0]));
+		response.setFileType(fileType.toArray(new String[0]));
 		response.setNumLikes(likes.size());
 		response.setUserId(post.getUser().getId());
 		response.setUserAvatar(post.getUser().getAvatar());

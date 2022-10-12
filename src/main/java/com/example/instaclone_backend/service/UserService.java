@@ -105,15 +105,8 @@ public class UserService {
 		}
 
 		User user = optionalUser.get();
-		UserProfileDto response = new UserProfileDto(
-				user.getAvatar(),
-				user.getFirstName(),
-				user.getLastName(),
-				user.getEmail(),
-				user.getPhotos().size(),
-				user.getVideos().size(),
-				user.getPosts().size()
-		);
+		UserProfileDto response = new UserProfileDto(user.getAvatar(), user.getFirstName(), user.getLastName(),
+				user.getEmail(), user.getPhotos().size(), user.getVideos().size(), user.getPosts().size());
 
 		return response;
 	}
@@ -121,13 +114,13 @@ public class UserService {
 	public ResponseEntity<ApiResponse> editUserProfile(EditUserProfileDto editUserDto, Integer userId) {
 		Optional<User> optionalUser = userRepo.findById(userId);
 		MultipartFile avatar = editUserDto.getAvatar();
-		
+
 		if (optionalUser.isEmpty()) {
 			throw new CustomException("user is not present");
 		}
 
 		User user = optionalUser.get();
-		
+
 		// Check if the old password is correct
 		try {
 			if (!user.getPassword().equals(hashPassword(editUserDto.getOldPassword()))) {
@@ -136,29 +129,68 @@ public class UserService {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		
+
 		String fileName = StringUtils.cleanPath(avatar.getOriginalFilename());
 		if (fileName.contains("..")) {
 			throw new CustomException("not a valid file");
 		}
-		
+
 		try {
 			user.setAvatar(Base64.getEncoder().encodeToString(avatar.getBytes()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		user.setFirstName(editUserDto.getFirstName());
 		user.setLastName(editUserDto.getLastName());
 		user.setEmail(editUserDto.getEmail());
-		
+
 		try {
 			user.setPassword(hashPassword(editUserDto.getNewPassword()));
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-		
+
 		userRepo.save(user);
 		return new ResponseEntity<>(new ApiResponse(true, "user edited"), HttpStatus.CREATED);
+	}
+
+	public void followUser(Integer toFollowId, User user) {
+		Optional<User> optionalToFollow = userRepo.findById(toFollowId);
+
+		if (optionalToFollow.isEmpty()) {
+			throw new CustomException("user does not exist");
+		}
+
+		User toFollow = optionalToFollow.get();
+		
+		if(user.getFollowing().contains(toFollow)) {
+			unfollow(user, toFollow);
+		}
+		else {
+			follow(user, toFollow);
+		}
+	}
+
+	public void follow(User user, User toFollow) {
+		user.getFollowing().add(toFollow);
+		toFollow.getFollowers().add(user);
+	}
+
+	public void unfollow(User user, User toFollow) {
+		user.getFollowing().remove(toFollow);
+		toFollow.getFollowers().remove(user);
+	}
+
+	public Boolean isFollowed(Integer userId, User currentUser) {
+		Optional<User> optionalToFollow = userRepo.findById(userId);
+
+		if (optionalToFollow.isEmpty()) {
+			throw new CustomException("user does not exist");
+		}
+
+		User toFollow = optionalToFollow.get();
+		
+		return currentUser.getFollowing().contains(toFollow);
 	}
 }

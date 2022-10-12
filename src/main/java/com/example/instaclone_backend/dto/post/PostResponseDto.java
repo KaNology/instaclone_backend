@@ -7,6 +7,7 @@ public class PostResponseDto {
 	private String title;
 	private String description;
 	private String[] files;
+	private String[] fileType;
 	private List<CommentResponseDto> comments;
 	private Boolean isLiked;
 	private Integer numLikes;
@@ -15,6 +16,12 @@ public class PostResponseDto {
 	private String userName;
 	private String userAvatar;
 	
+	public String[] getFileType() {
+		return fileType;
+	}
+	public void setFileType(String[] fileType) {
+		this.fileType = fileType;
+	}
 	public Integer getUserId() {
 		return userId;
 	}

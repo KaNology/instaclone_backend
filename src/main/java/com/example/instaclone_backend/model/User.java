@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -41,17 +44,18 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Post> posts;
-	
-	public List<Post> getPosts() {
-		return posts;
-	}
-
-	public void setPosts(List<Post> posts) {
-		this.posts = posts;
-	}
 
 	@Column(name = "role")
 	private String role;
+
+    @JoinTable(name = "followers",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "follower_id")})
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<User> following;
+	
+	@ManyToMany(cascade = CascadeType.ALL, mappedBy = "following")
+    private List<User> followers;
 
 	public User() {
 		super();
@@ -66,12 +70,20 @@ public class User {
 		this.role = role;
 	}
 
-	public String getAvatar() {
-		return avatar;
+	public List<User> getFollowing() {
+		return following;
 	}
 
-	public void setAvatar(String avatar) {
-		this.avatar = avatar;
+	public void setFollowing(List<User> following) {
+		this.following = following;
+	}
+
+	public List<User> getFollowers() {
+		return followers;
+	}
+
+	public void setFollowers(List<User> followers) {
+		this.followers = followers;
 	}
 
 	public List<Photo> getPhotos() {
@@ -88,6 +100,22 @@ public class User {
 
 	public void setVideos(List<Video> videos) {
 		this.videos = videos;
+	}
+
+	public List<Post> getPosts() {
+		return posts;
+	}
+
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 	public String getPassword() {

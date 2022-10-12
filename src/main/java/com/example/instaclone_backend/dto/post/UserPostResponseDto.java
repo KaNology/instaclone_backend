@@ -4,10 +4,17 @@ public class UserPostResponseDto {
 	private Integer postId;
 	private String title;
 	private String thumbnail;
+	private String thumbnailType;
 	private Boolean isPrivate;
 	public UserPostResponseDto() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+	public String getThumbnailType() {
+		return thumbnailType;
+	}
+	public void setThumbnailType(String thumbnailType) {
+		this.thumbnailType = thumbnailType;
 	}
 	public Integer getPostId() {
 		return postId;

@@ -63,8 +63,8 @@ public class PostController {
 			if (fileName.contains("..")) {
 				throw new CustomException("not a valid file");
 			}
-			
-			if (fileName.contains(".jpg") || fileName.contains(".jpeg") || fileName.contains(".png")) {
+
+			if (fileName.contains(".JPG") || fileName.contains(".jpg") || fileName.contains(".jpeg") || fileName.contains(".png")) {
 				File newFile = fileService.createFile(file, "image", newPost);
 				photoService.createPhoto(newFile, user);
 			} else if (fileName.contains(".mp4")) {
@@ -77,7 +77,17 @@ public class PostController {
 	}
 
 	@GetMapping("/list/{userId}")
-	public List<UserPostResponseDto> getAllUserPost(@PathVariable("userId") Integer userId) {
+	public List<UserPostResponseDto> getAllUserPost(@PathVariable("userId") Integer userId,
+			@RequestParam(name = "token", required = false) String token) {
+		if (token != null) {
+			// authenticate the user
+			tokenService.authenticate(token);
+
+			User currentUser = tokenService.getUser(token);
+
+			return postService.getAllUserPost(userId, currentUser);
+		}
+		
 		return postService.getAllUserPost(userId);
 	}
 
@@ -107,7 +117,7 @@ public class PostController {
 
 			return postService.getAllPublicPost(user);
 		}
-		
+
 		return postService.getAllPublicPost();
 	}
 }

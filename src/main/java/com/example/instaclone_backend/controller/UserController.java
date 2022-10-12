@@ -1,5 +1,7 @@
 package com.example.instaclone_backend.controller;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,11 +46,11 @@ public class UserController {
 	public SigninResponseDto signin(@RequestBody SigninDto signinDto) {
 		return userService.signin(signinDto);
 	}
-	
+
 	@GetMapping("/")
 	public ResponseEntity<Integer> getUserIdByToken(@RequestParam("token") String token) {
 		tokenService.authenticate(token);
-		
+
 		return new ResponseEntity<>(tokenService.getUser(token).getId(), HttpStatus.OK);
 	}
 
@@ -65,11 +67,37 @@ public class UserController {
 		tokenService.authenticate(token);
 
 		User user = tokenService.getUser(token);
-		
+
 		if (user.getId() != userId) {
 			throw new CustomException("not the same user");
 		}
 
 		return userService.editUserProfile(editUserDto, userId);
+	}
+
+	@Transactional
+	@PostMapping("/follow/{userId}")
+	public void followUser(@PathVariable("userId") Integer userId, @RequestParam("token") String token) {
+		// authenticate the user
+		tokenService.authenticate(token);
+
+		User user = tokenService.getUser(token);
+
+		if (user.getId() == userId) {
+			throw new CustomException("cannot follow yourself");
+		}
+
+		userService.followUser(userId, user);
+	}
+
+	@Transactional
+	@GetMapping("/isFollowed/{userId}")
+	public Boolean isFollowed(@PathVariable("userId") Integer userId, @RequestParam("token") String token) {
+		// authenticate the user
+		tokenService.authenticate(token);
+
+		User currentUser = tokenService.getUser(token);
+		
+		return userService.isFollowed(userId, currentUser);
 	}
 }
