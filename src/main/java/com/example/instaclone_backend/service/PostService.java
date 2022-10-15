@@ -34,30 +34,42 @@ public class PostService {
 
 	public Post createPost(PostDto postDto, User user) {
 		Post newPost = new Post();
-		
+
 		newPost.setTitle(postDto.getTitle());
 		newPost.setDescription(postDto.getDescription());
 		newPost.setUser(user);
 		newPost.setIsPrivate(postDto.getIsPrivate());
 		postRepo.save(newPost);
-		
+
 		return newPost;
 	}
 
-	public List<UserPostResponseDto> getAllUserPost(Integer userId, User...user) {
+	public List<UserPostResponseDto> getAllUserPost(Integer userId, User... user) {
 		List<Post> userPosts = postRepo.findByUserId(userId);
 		List<UserPostResponseDto> response = new ArrayList<>();
-		
+
 		for (Post post : userPosts) {
-			UserPostResponseDto responseDto = new UserPostResponseDto();
+			if (user.length > 0 && userId == user[0].getId()) {
+				UserPostResponseDto responseDto = new UserPostResponseDto();
+				
+				responseDto.setPostId(post.getId());
+				responseDto.setTitle(post.getTitle());
+				responseDto.setThumbnail(post.getFiles().get(0).getFile());
+				responseDto.setThumbnailType(post.getFiles().get(0).getFileType());
+				responseDto.setIsPrivate(post.getIsPrivate());
+				
+				response.add(responseDto);
+			} else if (!post.getIsPrivate()) {
+				UserPostResponseDto responseDto = new UserPostResponseDto();
+				
+				responseDto.setPostId(post.getId());
+				responseDto.setTitle(post.getTitle());
+				responseDto.setThumbnail(post.getFiles().get(0).getFile());
+				responseDto.setThumbnailType(post.getFiles().get(0).getFileType());
+				
+				response.add(responseDto);
+			}
 
-			responseDto.setPostId(post.getId());
-			responseDto.setTitle(post.getTitle());
-			responseDto.setThumbnail(post.getFiles().get(0).getFile());
-			responseDto.setThumbnailType(post.getFiles().get(0).getFileType());
-			responseDto.setIsPrivate(post.getIsPrivate());
-
-			response.add(responseDto);
 		}
 		return response;
 	}
@@ -90,52 +102,50 @@ public class PostService {
 		response.setTitle(post.getTitle());
 		response.setDescription(post.getDescription());
 		response.setComments(postComments);
-		
+
 		List<String> files = new ArrayList<>();
 		List<String> fileType = new ArrayList<>();
 		for (File file : post.getFiles()) {
 			files.add(file.getFile());
 			fileType.add(file.getFileType());
 		}
-		
+
 		response.setFiles(files.toArray(new String[0]));
 		response.setFileType(fileType.toArray(new String[0]));
 		response.setNumLikes(likes.size());
 		response.setUserId(post.getUser().getId());
 		response.setUserAvatar(post.getUser().getAvatar());
 		response.setUserName(post.getUser().getFirstName() + " " + post.getUser().getLastName());
-		response.setIsLiked(
-			Objects.nonNull(likeRepo.findByUserIdAndPostId(user[0].getId(), postId))
-		);
+		response.setIsLiked(Objects.nonNull(likeRepo.findByUserIdAndPostId(user[0].getId(), postId)));
 
 		return response;
 	}
 
-	public List<PostFeedResponseDto> getAllPublicPost(User...user) {
+	public List<PostFeedResponseDto> getAllPublicPost(User... user) {
 		// TODO Auto-generated method stub
 		List<Post> publicPosts = postRepo.findByIsPrivate(false);
 		List<PostFeedResponseDto> response = new ArrayList<>();
-		
-		for(Post post : publicPosts) {
+
+		for (Post post : publicPosts) {
 			PostFeedResponseDto responseDto = new PostFeedResponseDto();
 			List<Like> likes = likeRepo.findByPostId(post.getId());
-			
+
 			responseDto.setPostId(post.getId());
 			responseDto.setTitle(post.getTitle());
 			responseDto.setDescription(post.getDescription());
-			
+
 			responseDto.setThumbnail(post.getFiles().get(0).getFile());
 			responseDto.setNumLikes(likes.size());
 			responseDto.setIsLiked(Objects.nonNull(likeRepo.findByUserIdAndPostId(user[0].getId(), post.getId())));
-			
+
 			responseDto.setUserId(post.getUser().getId());
 			responseDto.setUserName(post.getUser().getFirstName() + " " + post.getUser().getLastName());
 			responseDto.setUserAvatar(post.getUser().getAvatar());
 			responseDto.setCreatedDate(post.getCreatedDate());
-			
+
 			response.add(responseDto);
 		}
-		
+
 		return response;
 	}
 }

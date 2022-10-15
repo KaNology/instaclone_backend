@@ -64,10 +64,10 @@ public class PostController {
 				throw new CustomException("not a valid file");
 			}
 
-			if (fileName.contains(".JPG") || fileName.contains(".jpg") || fileName.contains(".jpeg") || fileName.contains(".png")) {
+			if (fileName.contains(".PNG") || fileName.contains(".JPEG") || fileName.contains(".JPG") || fileName.contains(".jpg") || fileName.contains(".jpeg") || fileName.contains(".png")) {
 				File newFile = fileService.createFile(file, "image", newPost);
 				photoService.createPhoto(newFile, user);
-			} else if (fileName.contains(".mp4")) {
+			} else if (fileName.contains(".MP4") || fileName.contains(".mp4")) {
 				File newFile = fileService.createFile(file, "video", newPost);
 				videoService.createVideo(newFile, user);
 			}

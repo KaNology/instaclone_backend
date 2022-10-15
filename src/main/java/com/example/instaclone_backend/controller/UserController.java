@@ -1,5 +1,7 @@
 package com.example.instaclone_backend.controller;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.instaclone_backend.common.ApiResponse;
 import com.example.instaclone_backend.dto.ResponseDto;
 import com.example.instaclone_backend.dto.user.EditUserProfileDto;
+import com.example.instaclone_backend.dto.user.FollowerResponseDto;
 import com.example.instaclone_backend.dto.user.SigninDto;
 import com.example.instaclone_backend.dto.user.SigninResponseDto;
 import com.example.instaclone_backend.dto.user.SignupDto;
@@ -97,7 +100,37 @@ public class UserController {
 		tokenService.authenticate(token);
 
 		User currentUser = tokenService.getUser(token);
-		
+
 		return userService.isFollowed(userId, currentUser);
+	}
+
+	@GetMapping("/follower/{userId}")
+	public List<FollowerResponseDto> getFollowers(@PathVariable("userId") Integer userId,
+			@RequestParam(name = "token", required = false) String token) {
+		if (token != null) {
+			// authenticate the user
+			tokenService.authenticate(token);
+
+			User currentUser = tokenService.getUser(token);
+
+			return userService.getFollowers(userId, currentUser);
+		}
+
+		return userService.getFollowers(userId);
+	}
+
+	@GetMapping("/following/{userId}")
+	public List<FollowerResponseDto> getFollowings(@PathVariable("userId") Integer userId,
+			@RequestParam(name = "token", required = false) String token) {
+		if (token != null) {
+			// authenticate the user
+			tokenService.authenticate(token);
+
+			User currentUser = tokenService.getUser(token);
+
+			return userService.getFollowings(userId, currentUser);
+		}
+
+		return userService.getFollowings(userId);
 	}
 }

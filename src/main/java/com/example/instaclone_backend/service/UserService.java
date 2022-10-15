@@ -3,7 +3,9 @@ package com.example.instaclone_backend.service;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.instaclone_backend.common.ApiResponse;
 import com.example.instaclone_backend.dto.ResponseDto;
 import com.example.instaclone_backend.dto.user.EditUserProfileDto;
+import com.example.instaclone_backend.dto.user.FollowerResponseDto;
 import com.example.instaclone_backend.dto.user.SigninDto;
 import com.example.instaclone_backend.dto.user.SigninResponseDto;
 import com.example.instaclone_backend.dto.user.SignupDto;
@@ -106,7 +109,7 @@ public class UserService {
 
 		User user = optionalUser.get();
 		UserProfileDto response = new UserProfileDto(user.getAvatar(), user.getFirstName(), user.getLastName(),
-				user.getEmail(), user.getPhotos().size(), user.getVideos().size(), user.getPosts().size());
+				user.getEmail(), user.getPhotos().size(), user.getVideos().size(), user.getPosts().size(), user.getFollowers().size(), user.getFollowing().size());
 
 		return response;
 	}
@@ -183,6 +186,7 @@ public class UserService {
 	}
 
 	public Boolean isFollowed(Integer userId, User currentUser) {
+		// check if current user is following the toFollow
 		Optional<User> optionalToFollow = userRepo.findById(userId);
 
 		if (optionalToFollow.isEmpty()) {
@@ -192,5 +196,61 @@ public class UserService {
 		User toFollow = optionalToFollow.get();
 		
 		return currentUser.getFollowing().contains(toFollow);
+	}
+
+	public List<FollowerResponseDto> getFollowers(Integer userId, User...users) {
+		Optional<User> optionalUser = userRepo.findById(userId);
+		
+		if (optionalUser.isEmpty()) {
+			throw new CustomException("user does not exist");
+		}
+
+		User user = optionalUser.get();
+		List<FollowerResponseDto> response = new ArrayList<>();
+		
+		for (User follower : user.getFollowers()) {
+			FollowerResponseDto responseDto = new FollowerResponseDto();
+			responseDto.setUserId(follower.getId());
+			responseDto.setAvatar(follower.getAvatar());
+			responseDto.setUsername(follower.getFirstName() + " " + follower.getLastName());
+			responseDto.setPhotos(follower.getPhotos().size());
+			responseDto.setVideos(follower.getVideos().size());
+			
+			if(users.length > 0) {
+				responseDto.setIsFollowed(isFollowed(follower.getId(), users[0]));
+			}
+			
+			response.add(responseDto);
+		}
+		
+		return response;
+	}
+	
+	public List<FollowerResponseDto> getFollowings(Integer userId, User...users) {
+		Optional<User> optionalUser = userRepo.findById(userId);
+		
+		if (optionalUser.isEmpty()) {
+			throw new CustomException("user does not exist");
+		}
+
+		User user = optionalUser.get();
+		List<FollowerResponseDto> response = new ArrayList<>();
+		
+		for (User following : user.getFollowing()) {
+			FollowerResponseDto responseDto = new FollowerResponseDto();
+			responseDto.setUserId(following.getId());
+			responseDto.setAvatar(following.getAvatar());
+			responseDto.setUsername(following.getFirstName() + " " + following.getLastName());
+			responseDto.setPhotos(following.getPhotos().size());
+			responseDto.setVideos(following.getVideos().size());
+			
+			if(users.length > 0) {
+				responseDto.setIsFollowed(isFollowed(following.getId(), users[0]));
+			}
+			
+			response.add(responseDto);
+		}
+		
+		return response;
 	}
 }

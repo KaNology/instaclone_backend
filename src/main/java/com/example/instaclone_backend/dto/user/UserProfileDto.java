@@ -8,7 +8,25 @@ public class UserProfileDto {
 	private Integer photos;
 	private Integer videos;
 	private Integer posts;
+	private Integer followers;
+	private Integer followings;
 	
+	public Integer getFollowers() {
+		return followers;
+	}
+
+	public void setFollowers(Integer followers) {
+		this.followers = followers;
+	}
+
+	public Integer getFollowings() {
+		return followings;
+	}
+
+	public void setFollowings(Integer followings) {
+		this.followings = followings;
+	}
+
 	public String getAvatar() {
 		return avatar;
 	}
@@ -26,7 +44,7 @@ public class UserProfileDto {
 	}
 
 	public UserProfileDto(String avatar, String firstName, String lastName, String email, Integer photos,
-			Integer videos, Integer posts) {
+			Integer videos, Integer posts, Integer followers, Integer followings) {
 		super();
 		this.avatar = avatar;
 		this.firstName = firstName;
@@ -35,6 +53,8 @@ public class UserProfileDto {
 		this.photos = photos;
 		this.videos = videos;
 		this.posts = posts;
+		this.followers = followers;
+		this.followings = followings;
 	}
 
 	public UserProfileDto() {
